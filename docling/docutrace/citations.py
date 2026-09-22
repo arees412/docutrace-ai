@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: The Docling Contributors
+# SPDX-License-Identifier: MIT
+
 # SPDX-FileCopyrightText: 2026 Arees Shah
 # SPDX-License-Identifier: MIT
 
