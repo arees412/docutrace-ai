@@ -6,6 +6,17 @@
 
 # Docling
 
+> **DocuTrace AI derivative:** this fork preserves Docling's history, license,
+> copyright, and upstream identity while adding an opt-in governed document
+> intelligence layer under `docling.docutrace`. The original Docling project is
+> the parser foundation; DocuTrace adds controlled ingestion, typed extraction,
+> evidence and citation validation, human-review routing, privacy controls,
+> provenance, audit events, RAG-ready chunks, deterministic evaluation, and an
+> offline CI lane. See [UPSTREAM.md](UPSTREAM.md),
+> [FORK_CHANGES.md](FORK_CHANGES.md), and
+> [the DocuTrace architecture](docs/architecture.md). No benchmark, compliance,
+> production-scale, or customer claim is made.
+
 <p align="center">
   <a href="https://trendshift.io/repositories/17240" target="_blank"><img src="https://trendshift.io/api/badge/repositories/17240" alt="DS4SD%2Fdocling | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
 </p>
