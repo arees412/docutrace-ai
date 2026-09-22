@@ -575,6 +575,14 @@ depends_on = [
 ]
 
 [[modules]]
+path = "docling.docutrace"
+layer = "entrypoints"
+depends_on = [
+  "docling.datamodel",
+  "docling.document_converter",
+]
+
+[[modules]]
 path = "docling.document_extractor"
 layer = "entrypoints"
 depends_on = [
