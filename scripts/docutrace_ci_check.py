@@ -8,8 +8,8 @@
 
 from __future__ import annotations
 
-import hashlib
 import re
+import subprocess
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -20,9 +20,7 @@ REQUIRED_DOCS = (
     ROOT / "docs" / "security.md",
     ROOT / "docs" / "development.md",
 )
-EXPECTED_LICENSE_SHA256 = (
-    "5548fe5439075583606b3ce553c5c18f2397fb0abf0ad6b9c37dd6db7f137e85"
-)
+EXPECTED_LICENSE_GIT_BLOB = "6684a401bf0f700fd37104ab7c8da340036f7166"
 MODEL_SUFFIXES = {".bin", ".ckpt", ".onnx", ".pt", ".pth", ".safetensors"}
 SECRET_PATTERNS = (
     re.compile(r"AKIA[0-9A-Z]{16}"),
@@ -58,7 +56,17 @@ def main() -> int:
         errors.append("architecture Mermaid block is missing or unbalanced")
 
     license_bytes = (ROOT / "LICENSE").read_bytes()
-    if hashlib.sha256(license_bytes).hexdigest() != EXPECTED_LICENSE_SHA256:
+    license_blob = subprocess.run(
+        ["git", "hash-object", "--path", "LICENSE", "LICENSE"],
+        cwd=ROOT,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    if (
+        license_blob.returncode != 0
+        or license_blob.stdout.strip() != EXPECTED_LICENSE_GIT_BLOB
+    ):
         errors.append("root LICENSE differs from the audited upstream license")
     if b"Copyright The Docling Contributors" not in license_bytes:
         errors.append("upstream copyright notice is missing")
