@@ -1,0 +1,55 @@
+name: DocuTrace deterministic checks
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "docling/docutrace/**"
+      - "tests/docutrace/**"
+      - "scripts/docutrace_ci_check.py"
+      - "docs/architecture.md"
+      - "docs/security.md"
+      - "docs/development.md"
+      - "UPSTREAM.md"
+      - "FORK_CHANGES.md"
+      - "README.md"
+      - "LICENSE"
+      - "tach.toml"
+      - ".github/workflows/docutrace.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+  UV_FROZEN: "1"
+  HF_HUB_OFFLINE: "1"
+  TRANSFORMERS_OFFLINE: "1"
+
+jobs:
+  deterministic:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup-ubuntu-ci
+        with:
+          python_version: "3.10"
+          uv_sync_args: --frozen --only-group dev --only-group pr-fast-checks --no-install-project
+      - name: Formatting and lint
+        run: |
+          uv run --no-sync ruff format --check docling/docutrace tests/docutrace scripts/docutrace_ci_check.py
+          uv run --no-sync ruff check docling/docutrace tests/docutrace scripts/docutrace_ci_check.py
+      - name: Types and architecture boundaries
+        run: |
+          uv run --no-sync ty check docling/docutrace
+          uv run --no-sync tach check
+      - name: Unit, evaluation, and end-to-end tests
+        run: uv run --no-sync python -m pytest -q tests/docutrace
+      - name: Import, documentation, attribution, license, and secret policy
+        run: |
+          uv run --no-sync python -c "import docling.docutrace"
+          uv run --no-sync python scripts/docutrace_ci_check.py
